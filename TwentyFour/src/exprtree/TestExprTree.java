@@ -20,8 +20,10 @@ class TestExprTree
         ExprTree assignExpression = new ExprTree( );  // Test copying ExprTree
         
        
-        List<String> list=ExprTrans.trans(new String[] {"(","7","-","3",")","*","6","*","1"});
-       
+        //List<String> list=ExprTrans.trans(new String[] {"(","10","-","5","-","3",")","*","12"});
+        List<String> list=ExprTrans.trans(new String[] {"10","-","5","-","3"});
+        for(String s:list)
+        System.out.print(s);
         testExpression.build(list);
         testExpression.showStructure( );
         System.out.println(testExpression.expression( ));

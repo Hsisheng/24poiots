@@ -6,13 +6,23 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Random;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -50,6 +60,22 @@ public class GameGUI extends JFrame {
 	private Logic lg;
 	private boolean finishFlag=false;
 	private Stack<String> strStack=new Stack<String>();
+	
+	private static List<List<ImageIcon>> imageQs=new ArrayList<List<ImageIcon>>();
+	
+	static {
+		for(int i=1;i<=4;i++) {
+			List<ImageIcon> temp=new ArrayList<ImageIcon>();
+			for(int j=1;j<=9;j++) {
+				temp.add(new ImageIcon("res/"+i+""+j+".jpg"));
+			}
+			temp.add(new ImageIcon("res/"+i+""+"0"+".jpg"));
+			temp.add(new ImageIcon("res/"+i+""+"a"+".jpg"));
+			temp.add(new ImageIcon("res/"+i+""+"b"+".jpg"));
+			temp.add(new ImageIcon("res/"+i+""+"c"+".jpg"));
+			imageQs.add(temp);
+		}
+	}
 
 	
 
@@ -59,12 +85,19 @@ public class GameGUI extends JFrame {
 	public GameGUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("24点");
-		setBounds(100, 100, 1280, 800);
+		setBounds(100, 100, 1600, 900);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(5, 5));
 		setContentPane(contentPane);
+		this.addComponentListener(new ComponentAdapter(){
+			@Override public void componentResized(ComponentEvent e){
+				resize((ImageIcon)numBtn1.getIcon());
+				resize((ImageIcon)numBtn2.getIcon());
+				resize((ImageIcon)numBtn3.getIcon());
+				resize((ImageIcon)numBtn4.getIcon());
+			}});
 		
 		JPanel selectPanel = new JPanel();
 		selectPanel.setBackground(Color.WHITE);
@@ -181,23 +214,23 @@ public class GameGUI extends JFrame {
 		selectPanel.add(panel);
 		panel.setLayout(new GridLayout(1, 6, 5, 0));
 		
-		 numBtn1 = new JButton("1");
+		 numBtn1 = new JButton("");
 		numBtn1.setBackground(new Color(255, 255, 240));
 		numBtn1.setFont(new Font("Arial", Font.BOLD, 40));
 		panel.add(numBtn1);
 		
 		
-		 numBtn2 = new JButton("2");
+		 numBtn2 = new JButton("");
 		numBtn2.setBackground(new Color(255, 255, 240));
 		numBtn2.setFont(new Font("Arial", Font.BOLD, 40));
 		panel.add(numBtn2);
 		
-		 numBtn3 = new JButton("3");
+		 numBtn3 = new JButton("");
 		numBtn3.setBackground(new Color(255, 255, 240));
 		numBtn3.setFont(new Font("Arial", Font.BOLD, 40));
 		panel.add(numBtn3);
 		
-		 numBtn4 = new JButton("4");
+		 numBtn4 = new JButton("");
 		numBtn4.setBackground(new Color(255, 255, 240));
 		numBtn4.setFont(new Font("Arial", Font.BOLD, 40));
 		panel.add(numBtn4);
@@ -221,7 +254,7 @@ public class GameGUI extends JFrame {
 					}else {
 						JButton b=bStack.pop();
 						b.setEnabled(true);
-						int len=b.getText().length();
+						int len=String.valueOf(map.get(b)).length();
 						textField.setText(s.substring(0, s.length()-len));
 					}
 				}
@@ -334,11 +367,24 @@ public class GameGUI extends JFrame {
 	}
 	
 	public void changeNums(int[] nums) {
-		this.numBtn1.setText(String.valueOf(nums[0]));
-		this.numBtn2.setText(String.valueOf(nums[1]));
-		this.numBtn3.setText(String.valueOf(nums[2]));
-		this.numBtn4.setText(String.valueOf(nums[3]));
+		Random ran=new Random();
 		
+		map.put(numBtn1, nums[0]);
+		map.put(numBtn2, nums[1]);
+		map.put(numBtn3, nums[2]);
+		map.put(numBtn4, nums[3]);
+		numBtn1.setIcon( resize(imageQs.get(ran.nextInt(4)).get(nums[0]-1)));
+		numBtn2.setIcon( resize(imageQs.get(ran.nextInt(4)).get(nums[1]-1)));
+		numBtn3.setIcon( resize(imageQs.get(ran.nextInt(4)).get(nums[2]-1)));
+		numBtn4.setIcon( resize(imageQs.get(ran.nextInt(4)).get(nums[3]-1)));
+		
+	}
+	
+	private ImageIcon resize(ImageIcon image) {
+		Image img = image.getImage();
+		img = img.getScaledInstance(numBtn1.getWidth(), numBtn1.getHeight(), Image.SCALE_DEFAULT);
+		image.setImage(img);
+		return image;
 	}
 	
 	public void showAns(List<String> ans) {
@@ -368,6 +414,7 @@ public class GameGUI extends JFrame {
 	
 	
 	private Stack<JButton> bStack=new Stack<JButton>();
+	private HashMap<JButton,Integer> map=new HashMap<JButton,Integer>();
 	class InputListener implements ActionListener{
 
 		@Override
@@ -375,7 +422,7 @@ public class GameGUI extends JFrame {
 			JButton b=(JButton)e.getSource();
 			bStack.push(b);
 			b.setEnabled(false);
-			String in=b.getText();
+			String in=String.valueOf(map.get(b));
 			String s=textField.getText();
 			s+=in;
 			strStack.add(in);

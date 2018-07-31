@@ -15,10 +15,11 @@ public class App {
 			public void run() {
 				try {
 					GameGUI frame = new GameGUI();
+					frame.setVisible(true);
 					Generater gn=new BasicGenerater(new BasicVerifier());
 					Logic lgc=new TwentyFourLogic(frame,gn);
 					lgc.start();
-					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

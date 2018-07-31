@@ -1,5 +1,7 @@
 package game.table;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -20,8 +22,23 @@ public class MyTableModel extends AbstractTableModel {
     
     
     public void setValue(List<String> TableData) {
-    		this.TableData=TableData;
+    		
+    		this.TableData=cut(TableData);
     		this.fireTableDataChanged();
+    }
+    
+    private List<String> cut(List<String> orgList){
+    	List<String> newList=new ArrayList<String>();
+    	HashSet<Integer> set=new HashSet<Integer>();
+    	for(String s:orgList) {
+    		int i=1;
+    		for(char c:s.toCharArray()) {
+    			if(c=='+'||c=='-'||c=='*'||c=='/') i*=c;
+    		}
+    		if(set.add(i)) newList.add(s);
+    		
+    	}
+    	return newList;
     }
     
     @Override

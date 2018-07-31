@@ -17,7 +17,7 @@ public class ExprTrans {
 				if(stack.isEmpty()) {
 					stack.push(c);
 				}else {
-					if(c.equals("+")||c.equals('-')) {
+					if(c.equals("+")||c.equals("-")) {
 						while(!stack.isEmpty()) {
 							String chr=stack.pop();
 							if(chr.equals("+")||chr.equals("-")||chr.equals("*")||chr.equals("/")) {
@@ -53,7 +53,7 @@ public class ExprTrans {
 		}
 		while(!stack.isEmpty()) {
 			String c=stack.pop();
-			if(!c.equals("("))ans.add(c);
+			ans.add(c);
 		}
 		return ans;
 	}
